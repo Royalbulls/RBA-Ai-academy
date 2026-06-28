@@ -1,0 +1,140 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper Functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == "royalbullsadvisory412@gmail.com" ||
+        request.auth.token.role == "admin" ||
+        request.auth.token.isAdmin == true
+      );
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Collection 1: users
+    match /users/{userId} {
+      allow read: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      allow create: if isSignedIn() && isOwner(userId) && 
+                    incoming().role == "customer" && 
+                    incoming().createdAt is timestamp && 
+                    incoming().updatedAt is timestamp;
+      allow update: if isSignedIn() && (isOwner(userId) || isAdmin()) &&
+                    (isAdmin() || (
+                      incoming().role == existing().role &&
+                      incoming().createdAt == existing().createdAt &&
+                      incoming().updatedAt is timestamp &&
+                      incoming().diff(existing()).affectedKeys().hasOnly([
+                        "name", "displayName", "email", "photoURL", 
+                        "phoneNumber", "phone", "objective", 
+                        "onboardingCompleted", "isGuest", "updatedAt",
+                        "learningGoals", "businessDetails", "writingStyle", 
+                        "languagePreference", "pinnedKnowledge"
+                      ])
+                    ));
+      allow delete: if isAdmin();
+    }
+
+    // Collection 9: conversations
+    match /conversations/{conversationId} {
+      allow read: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if isSignedIn() && incoming().userId == request.auth.uid;
+      allow update: if isSignedIn() && (existing().userId == request.auth.uid || isAdmin()) && 
+                    incoming().userId == existing().userId;
+      allow delete: if isSignedIn() && (existing().userId == request.auth.uid || isAdmin());
+    }
+
+    // Collection 2: loans
+    match /loans/{loanId} {
+      allow read: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if isSignedIn() && incoming().userId == request.auth.uid &&
+                    incoming().status == "pending" &&
+                    incoming().createdAt is timestamp &&
+                    incoming().updatedAt is timestamp;
+      allow update: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin()) &&
+                    incoming().userId == existing().userId &&
+                    incoming().createdAt == existing().createdAt &&
+                    incoming().updatedAt is timestamp &&
+                    (isAdmin() || (
+                      incoming().status == "documents_submitted" &&
+                      incoming().diff(existing()).affectedKeys().hasOnly([
+                        "status", "applicantName", "applicantPhone", 
+                        "monthlyIncome", "updatedAt"
+                      ])
+                    ));
+      allow delete: if isAdmin();
+    }
+
+    // Collection 3: CRM records (Leads assigned to advisors)
+    match /crm/{leadId} {
+      allow read: if isSignedIn() && (resource.data.advisorId == request.auth.uid || isAdmin());
+      allow create: if isSignedIn() && (incoming().advisorId == request.auth.uid || isAdmin()) &&
+                    incoming().updatedAt is timestamp;
+      allow update: if isSignedIn() && (existing().advisorId == request.auth.uid || isAdmin()) &&
+                    (isAdmin() || (
+                      incoming().advisorId == existing().advisorId &&
+                      incoming().updatedAt is timestamp
+                    ));
+      allow delete: if isAdmin();
+    }
+
+    // Collection 4: Marketplace Leads
+    match /leads/{marketplaceLeadId} {
+      allow read: if isSignedIn();
+      allow create: if isAdmin();
+      allow update: if isSignedIn() && (
+                      isAdmin() || (
+                        existing().status == "available" &&
+                        incoming().status == "claimed" &&
+                        incoming().claimedBy == request.auth.uid &&
+                        incoming().diff(existing()).affectedKeys().hasOnly(["status", "claimedBy"])
+                      )
+                    );
+      allow delete: if isAdmin();
+    }
+
+    // Collection 5: Academy courses
+    match /academy/{courseId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // Collection 6: Wallet reports
+    match /wallets/{userId} {
+      allow read: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      allow write: if isAdmin();
+    }
+
+    // Collection 7: Certificates
+    match /certificates/{certificateId} {
+      allow read: if true; // Public verification allowed via scan/lookup
+      allow write: if isAdmin();
+    }
+
+    // Collection 8: Knowledge articles / SOP Documents
+    match /knowledge/{docId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+  }
+}

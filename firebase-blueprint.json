@@ -1,0 +1,150 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "Registered users of the RBA AI OS platform",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "The user's full name" },
+        "email": { "type": "string", "format": "email", "description": "The user's verified email address" },
+        "role": { "type": "string", "enum": ["customer", "advisor", "admin"], "description": "System role controlling dashboard features" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Modification timestamp" }
+      },
+      "required": ["name", "email", "role", "createdAt", "updatedAt"]
+    },
+    "Loan": {
+      "title": "Loan Application",
+      "description": "Details of personal or business loans requested by users",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "The ID of the requesting user" },
+        "type": { "type": "string", "enum": ["personal", "business", "home"], "description": "Type of loan requested" },
+        "amountRequested": { "type": "number", "description": "Requested principal amount" },
+        "status": { "type": "string", "enum": ["pending", "documents_submitted", "approved", "rejected"], "description": "Current processing status" },
+        "applicantName": { "type": "string", "description": "Full legal name of applicant" },
+        "applicantPhone": { "type": "string", "description": "Contact phone number" },
+        "monthlyIncome": { "type": "number", "description": "Self-reported monthly net income" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "type", "amountRequested", "status", "applicantName", "applicantPhone", "monthlyIncome", "createdAt", "updatedAt"]
+    },
+    "CRMLead": {
+      "title": "CRM Lead record",
+      "description": "Active sales lead assigned to an advisor",
+      "type": "object",
+      "properties": {
+        "advisorId": { "type": "string", "description": "The ID of the assigned advisor" },
+        "customerName": { "type": "string" },
+        "customerEmail": { "type": "string", "format": "email" },
+        "customerPhone": { "type": "string" },
+        "leadSource": { "type": "string" },
+        "status": { "type": "string", "enum": ["new", "contacted", "negotiation", "won", "lost"] },
+        "notes": { "type": "string" },
+        "loanStatus": { "type": "string" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["advisorId", "customerName", "customerEmail", "customerPhone", "status", "updatedAt"]
+    },
+    "MarketplaceLead": {
+      "title": "Marketplace Lead",
+      "description": "Business leads open for bid or claim by advisors",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "type": { "type": "string" },
+        "location": { "type": "string" },
+        "commissionAmount": { "type": "number" },
+        "status": { "type": "string", "enum": ["available", "claimed"] },
+        "claimedBy": { "type": "string", "description": "Advisor user ID or null" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "type", "location", "commissionAmount", "status", "claimedBy", "createdAt"]
+    },
+    "AcademyCourse": {
+      "title": "Academy Course",
+      "description": "Training programs for advisory skills",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "lessons": { "type": "array" }
+      },
+      "required": ["title", "description", "lessons"]
+    },
+    "Wallet": {
+      "title": "Advisor Wallet",
+      "description": "Balance and earnings summary for an advisor",
+      "type": "object",
+      "properties": {
+        "balance": { "type": "number" },
+        "commissionEarned": { "type": "number" },
+        "referralEarnings": { "type": "number" },
+        "transactions": { "type": "array" }
+      },
+      "required": ["balance", "commissionEarned", "referralEarnings", "transactions"]
+    },
+    "Certificate": {
+      "title": "Academy Certificate",
+      "description": "Verified certification of course completion",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "courseName": { "type": "string" },
+        "qrCodeData": { "type": "string" },
+        "issuedAt": { "type": "string", "format": "date-time" },
+        "digitalSignature": { "type": "string" }
+      },
+      "required": ["userId", "userName", "courseName", "qrCodeData", "issuedAt", "digitalSignature"]
+    },
+    "KnowledgeDoc": {
+      "title": "Knowledge Document",
+      "description": "SOPs, product manuals, and files uploaded for future semantic search",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "category": { "type": "string" },
+        "content": { "type": "string" },
+        "uploadedBy": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "category", "content", "uploadedBy", "createdAt"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "User",
+      "description": "Platform user profiles"
+    },
+    "loans/{loanId}": {
+      "schema": "Loan",
+      "description": "Application workflows for loans"
+    },
+    "crm/{leadId}": {
+      "schema": "CRMLead",
+      "description": "Active advisor customer records"
+    },
+    "leads/{marketplaceLeadId}": {
+      "schema": "MarketplaceLead",
+      "description": "Marketplace lead bids and claims"
+    },
+    "academy/{courseId}": {
+      "schema": "AcademyCourse",
+      "description": "LMS lessons, mock tests, and courses"
+    },
+    "wallets/{userId}": {
+      "schema": "Wallet",
+      "description": "Earnings and withdrawals records"
+    },
+    "certificates/{certificateId}": {
+      "schema": "Certificate",
+      "description": "Verification engine credentials"
+    },
+    "knowledge/{docId}": {
+      "schema": "KnowledgeDoc",
+      "description": "Enterprise policies and documents library"
+    }
+  }
+}

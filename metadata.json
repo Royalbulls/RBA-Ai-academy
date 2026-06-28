@@ -1,0 +1,6 @@
+{
+  "name": "RBA AI OS",
+  "description": "An AI-first Operating System for businesses, advisors, entrepreneurs, and professionals by Royal Bulls Advisory Pvt. Ltd.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

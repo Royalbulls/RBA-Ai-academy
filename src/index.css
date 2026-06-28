@@ -1,0 +1,76 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+/* Premium Dark-Mode Overrides for Unified AI OS Experience */
+.premium-dark-override {
+  color: #f3f4f6;
+}
+
+.premium-dark-override .bg-white {
+  background-color: rgba(255, 255, 255, 0.02) !important;
+  border-color: rgba(255, 255, 255, 0.05) !important;
+  color: #f3f4f6 !important;
+}
+
+.premium-dark-override .text-neutral-900,
+.premium-dark-override .text-neutral-950,
+.premium-dark-override .text-neutral-800,
+.premium-dark-override .text-neutral-700,
+.premium-dark-override h2,
+.premium-dark-override h3,
+.premium-dark-override h4 {
+  color: #ffffff !important;
+}
+
+.premium-dark-override .text-neutral-600,
+.premium-dark-override .text-neutral-550,
+.premium-dark-override .text-neutral-500,
+.premium-dark-override .text-neutral-450,
+.premium-dark-override .text-neutral-400 {
+  color: #9ca3af !important;
+}
+
+.premium-dark-override .bg-neutral-50,
+.premium-dark-override .bg-neutral-100,
+.premium-dark-override .bg-neutral-150 {
+  background-color: rgba(255, 255, 255, 0.03) !important;
+  border-color: rgba(255, 255, 255, 0.05) !important;
+  color: #f3f4f6 !important;
+}
+
+.premium-dark-override input, 
+.premium-dark-override select, 
+.premium-dark-override textarea {
+  background-color: rgba(255, 255, 255, 0.04) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.premium-dark-override input::placeholder {
+  color: #6b7280 !important;
+}
+
+.premium-dark-override .border-neutral-200,
+.premium-dark-override .border-neutral-200/60,
+.premium-dark-override .border-neutral-200/80,
+.premium-dark-override .border-neutral-150,
+.premium-dark-override .border-neutral-100,
+.premium-dark-override .border-b-2 {
+  border-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+.premium-dark-override .shadow-sm,
+.premium-dark-override .shadow-xs {
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2) !important;
+}
+
+.premium-dark-override .text-neutral-300 {
+  color: #d1d5db !important;
+}
+
+
