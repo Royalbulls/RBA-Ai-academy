@@ -7,9 +7,10 @@ import { FileText, Plus, Landmark, Phone, BadgeIndianRupee, ChevronRight, CheckC
 interface LoanWorkflowProps {
   currentUser: { id: string; name: string; role: string } | null;
   prefillData?: { type?: LoanType; amountRequested?: number };
+  onNotificationCreated?: (title: string, text: string) => void;
 }
 
-export default function LoanWorkflow({ currentUser, prefillData }: LoanWorkflowProps) {
+export default function LoanWorkflow({ currentUser, prefillData, onNotificationCreated }: LoanWorkflowProps) {
   const [loans, setLoans] = useState<LoanApplication[]>([]);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -70,6 +71,12 @@ export default function LoanWorkflow({ currentUser, prefillData }: LoanWorkflowP
     try {
       await addDoc(collection(db, "loans"), payload);
       setMessage("Loan application submitted successfully!");
+      if (onNotificationCreated) {
+        onNotificationCreated(
+          "Loan Requested",
+          `Your personal loan request of ₹${Number(amount).toLocaleString("en-IN")} has been filed and is under evaluation.`
+        );
+      }
       fetchLoans();
     } catch (err) {
       handleFirestoreError(err, OperationType.CREATE, "loans");
@@ -86,6 +93,12 @@ export default function LoanWorkflow({ currentUser, prefillData }: LoanWorkflowP
         updatedAt: new Date(),
       });
       setMessage("Documents uploaded. Application moved to verification!");
+      if (onNotificationCreated) {
+        onNotificationCreated(
+          "Documents Sync Complete",
+          "Your identity verification files have been securely scanned and uploaded to RBA Admin panels."
+        );
+      }
       fetchLoans();
     } catch (err) {
       handleFirestoreError(err, OperationType.UPDATE, `loans/${loanId}`);

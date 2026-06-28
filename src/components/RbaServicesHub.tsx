@@ -10,9 +10,10 @@ import { motion } from "motion/react";
 interface RbaServicesHubProps {
   currentUser: { id: string; name: string; email: string; phone?: string; phoneNumber?: string } | null;
   onTriggerAiWithQuery?: (prompt: string) => void;
+  onNotificationCreated?: (title: string, text: string) => void;
 }
 
-export default function RbaServicesHub({ currentUser, onTriggerAiWithQuery }: RbaServicesHubProps) {
+export default function RbaServicesHub({ currentUser, onTriggerAiWithQuery, onNotificationCreated }: RbaServicesHubProps) {
   const [selectedService, setSelectedService] = useState<string>("Business Loan Assistance");
   const [customerName, setCustomerName] = useState(currentUser?.name || "");
   const [customerEmail, setCustomerEmail] = useState(currentUser?.email || "");
@@ -83,6 +84,12 @@ export default function RbaServicesHub({ currentUser, onTriggerAiWithQuery }: Rb
       await addDoc(collection(db, "service_requests"), requestPayload);
       setSuccess(true);
       setNotes("");
+      if (onNotificationCreated) {
+        onNotificationCreated(
+          "Service Request Lodged",
+          `Your request for "${selectedService}" has been successfully logged with RBA Corporate Office.`
+        );
+      }
     } catch (err) {
       console.error("Failed to lodge RBA service request:", err);
       alert("Something went wrong. Please check your network and try again.");

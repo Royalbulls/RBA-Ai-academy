@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { GraduationCap, CheckCircle, Play, Sparkles, Award, Star, ArrowRight, ShieldCheck, FileText, CheckCircle2 } from "lucide-react";
+import { GraduationCap, CheckCircle, Play, Sparkles, Award, Star, ArrowRight, ShieldCheck, FileText, CheckCircle2, RotateCcw, Check, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { Course, Lesson } from "../types";
 
@@ -34,6 +34,139 @@ const COURSES: Course[] = [
   }
 ];
 
+interface QuizQuestion {
+  question: string;
+  options: string[];
+  correctIdx: number;
+}
+
+const QUIZZES: Record<string, QuizQuestion[]> = {
+  course_loan: [
+    {
+      question: "Which document is mandatory for identity verification under official RBI KYC standards?",
+      options: [
+        "Library membership or gym registration card",
+        "Aadhaar Card, PAN Card, or Valid Passport",
+        "A personal hand-written recommendation letter from a family member"
+      ],
+      correctIdx: 1
+    },
+    {
+      question: "How should an RBA Advisor handle the customer objection 'Your interest rates are too high'?",
+      options: [
+        "Agree with the customer and hang up immediately",
+        "Explain that high rates are due to market inflation and complain about bank policies",
+        "Highlight custom loan structures, faster processing speed, door-step service, and absence of hidden charges"
+      ],
+      correctIdx: 2
+    },
+    {
+      question: "What is a key benefit of SME working capital loans over general personal loans?",
+      options: [
+        "Calibrated higher borrowing limits specifically for business inventory and cash flow cycles",
+        "Completely zero documentation required for any amount",
+        "That the loan is fully exempted from standard business tax audits"
+      ],
+      correctIdx: 0
+    }
+  ],
+  course_consult: [
+    {
+      question: "What is the standard annual turnover threshold requiring mandatory GST registration for service providers in India?",
+      options: ["₹5 Lakhs", "₹20 Lakhs", "₹1 Crore"],
+      correctIdx: 1
+    },
+    {
+      question: "Which GST scheme is designed to simplify compliance for small taxpayers with simplified quarterly rates?",
+      options: ["GST Composition Scheme", "GST Premium Sovereign Tier", "Universal Corporate Duty Waiver"],
+      correctIdx: 0
+    },
+    {
+      question: "How does obtaining an MSME registration certificate assist a small business in India?",
+      options: [
+        "It waives all central income tax liabilities permanently",
+        "It grants access to priority sector bank lending, interest rate subsidies, and protection against delayed payments",
+        "It provides free physical corporate offices across India"
+      ],
+      correctIdx: 1
+    }
+  ],
+  course_ai: [
+    {
+      question: "What does 'RAG' stand for in modern enterprise AI systems?",
+      options: ["Random Access Generation", "Retrieval-Augmented Generation", "Robust Application Gateways"],
+      correctIdx: 1
+    },
+    {
+      question: "Why is it recommended to perform Gemini API calls on the server instead of the browser?",
+      options: [
+        "Browsers are incapable of processing complex prompt requests",
+        "To prevent exposure and theft of your secret API Key via the browser's developer console",
+        "Because server proxies translate model responses into English automatically"
+      ],
+      correctIdx: 1
+    },
+    {
+      question: "Which Gemini model is optimized for high-volume, fast response times, and general task automation?",
+      options: ["gemini-2.5-pro", "gemini-2.5-flash", "gemini-ultra-heavy"],
+      correctIdx: 1
+    }
+  ]
+};
+
+// Generates a beautiful SVG vector QR Code Matrix dynamically for verification
+const renderQrCodeSvg = (text: string) => {
+  return (
+    <svg className="w-16 h-16 text-emerald-400 bg-white p-1 rounded-xl shadow-lg border border-emerald-500/20" viewBox="0 0 100 100">
+      <rect width="100" height="100" fill="white" />
+      {/* Outer tracking squares */}
+      <rect x="10" y="10" width="22" height="22" fill="#022c22" />
+      <rect x="14" y="14" width="14" height="14" fill="white" />
+      <rect x="17" y="17" width="8" height="8" fill="#022c22" />
+      
+      <rect x="68" y="10" width="22" height="22" fill="#022c22" />
+      <rect x="72" y="14" width="14" height="14" fill="white" />
+      <rect x="75" y="17" width="8" height="8" fill="#022c22" />
+
+      <rect x="10" y="68" width="22" height="22" fill="#022c22" />
+      <rect x="14" y="72" width="14" height="14" fill="white" />
+      <rect x="17" y="75" width="8" height="8" fill="#022c22" />
+
+      {/* Tiny alignment tracking squares */}
+      <rect x="68" y="68" width="10" height="10" fill="#022c22" />
+      <rect x="70" y="70" width="6" height="6" fill="white" />
+      <rect x="72" y="72" width="2" height="2" fill="#022c22" />
+
+      {/* Grid of random security QR-like data cells */}
+      <rect x="42" y="10" width="5" height="5" fill="#022c22" />
+      <rect x="50" y="15" width="5" height="5" fill="#022c22" />
+      <rect x="42" y="25" width="5" height="5" fill="#022c22" />
+      <rect x="52" y="22" width="5" height="5" fill="#022c22" />
+      <rect x="10" y="42" width="5" height="5" fill="#022c22" />
+      <rect x="25" y="48" width="5" height="5" fill="#022c22" />
+      <rect x="18" y="52" width="5" height="5" fill="#022c22" />
+      <rect x="35" y="42" width="5" height="5" fill="#022c22" />
+      <rect x="42" y="42" width="5" height="5" fill="#022c22" />
+      <rect x="48" y="42" width="5" height="5" fill="#022c22" />
+      <rect x="52" y="48" width="5" height="5" fill="#022c22" />
+      <rect x="60" y="42" width="5" height="5" fill="#022c22" />
+      <rect x="10" y="52" width="5" height="5" fill="#022c22" />
+      <rect x="30" y="52" width="5" height="5" fill="#022c22" />
+      
+      <rect x="75" y="42" width="5" height="5" fill="#022c22" />
+      <rect x="82" y="48" width="5" height="5" fill="#022c22" />
+      <rect x="88" y="42" width="5" height="5" fill="#022c22" />
+      <rect x="82" y="55" width="5" height="5" fill="#022c22" />
+      <rect x="42" y="65" width="5" height="5" fill="#022c22" />
+      <rect x="52" y="72" width="5" height="5" fill="#022c22" />
+      <rect x="48" y="80" width="5" height="5" fill="#022c22" />
+      <rect x="55" y="85" width="5" height="5" fill="#022c22" />
+      <rect x="82" y="80" width="5" height="5" fill="#022c22" />
+      <rect x="88" y="85" width="5" height="5" fill="#022c22" />
+    </svg>
+  );
+};
+
 interface AcademyWorkspaceProps {
   currentUser: { id: string; name: string } | null;
   completedCourseIds: string[];
@@ -50,6 +183,13 @@ export default function AcademyWorkspace({
   const [coursesState, setCoursesState] = useState<Course[]>(COURSES);
   const [selectedCourse, setSelectedCourse] = useState<Course>(COURSES[0]);
   const [activeSubTab, setActiveSubTab] = useState<"curriculum" | "roleplay" | "certificates">("curriculum");
+
+  // Quiz states
+  const [activeQuizCourseId, setActiveQuizCourseId] = useState<string | null>(null);
+  const [quizQuestionIdx, setQuizQuestionIdx] = useState(0);
+  const [quizAnswers, setQuizAnswers] = useState<number[]>([]);
+  const [quizScore, setQuizScore] = useState<number | null>(null);
+  const [quizError, setQuizError] = useState(false);
 
   // Role Play Simulator states
   const [customerType, setCustomerType] = useState("Skeptical & Angry");
@@ -85,11 +225,46 @@ export default function AcademyWorkspace({
     const matchingCourse = updatedCourses.find(c => c.id === courseId);
     if (matchingCourse) {
       setSelectedCourse(matchingCourse);
+    }
+  };
+
+  // Quiz actions
+  const startQuiz = (courseId: string) => {
+    setActiveQuizCourseId(courseId);
+    setQuizQuestionIdx(0);
+    setQuizAnswers([]);
+    setQuizScore(null);
+    setQuizError(false);
+  };
+
+  const handleSelectQuizOption = (optionIdx: number) => {
+    const newAnswers = [...quizAnswers];
+    newAnswers[quizQuestionIdx] = optionIdx;
+    setQuizAnswers(newAnswers);
+  };
+
+  const handleNextQuizQuestion = () => {
+    if (quizAnswers[quizQuestionIdx] === undefined) return;
+    
+    const questions = QUIZZES[activeQuizCourseId || ""] || [];
+    if (quizQuestionIdx < questions.length - 1) {
+      setQuizQuestionIdx(quizQuestionIdx + 1);
+    } else {
+      // Complete and score the quiz automatically
+      let correctCount = 0;
+      questions.forEach((q, i) => {
+        if (quizAnswers[i] === q.correctIdx) correctCount++;
+      });
       
-      // If all completed, trigger course completion
-      const allDone = matchingCourse.lessons.every((l) => l.completed);
-      if (allDone && !completedCourseIds.includes(courseId)) {
-        onCourseCompleted(courseId, matchingCourse.title);
+      setQuizScore(correctCount);
+      
+      if (correctCount === questions.length) {
+        // Unlocked!
+        if (activeQuizCourseId) {
+          onCourseCompleted(activeQuizCourseId, selectedCourse.title);
+        }
+      } else {
+        setQuizError(true);
       }
     }
   };
@@ -218,10 +393,14 @@ export default function AcademyWorkspace({
               {coursesState.map((course) => {
                 const completedCount = course.lessons.filter((l) => l.completed).length;
                 const isFinished = completedCount === course.lessons.length;
+                const isCertified = completedCourseIds.includes(course.id);
                 return (
                   <button
                     key={course.id}
-                    onClick={() => setSelectedCourse(course)}
+                    onClick={() => {
+                      setSelectedCourse(course);
+                      setActiveQuizCourseId(null); // Reset quiz view when swapping course
+                    }}
                     className={`w-full p-5 rounded-3xl border text-left transition duration-200 cursor-pointer hover:-translate-y-0.5 ${
                       selectedCourse.id === course.id
                         ? "bg-white/[0.04] border-emerald-500/30 text-white shadow-xl"
@@ -230,11 +409,15 @@ export default function AcademyWorkspace({
                   >
                     <div className="flex justify-between items-start gap-2">
                       <h4 className="font-bold text-sm">{course.title}</h4>
-                      {isFinished && (
+                      {isCertified ? (
                         <span className="text-xs px-2 py-0.5 bg-emerald-500/20 text-emerald-400 rounded-lg font-mono font-bold shrink-0">
-                          Completed
+                          Certified
                         </span>
-                      )}
+                      ) : isFinished ? (
+                        <span className="text-xs px-2 py-0.5 bg-amber-500/20 text-amber-400 rounded-lg font-mono font-bold shrink-0">
+                          Quiz Ready
+                        </span>
+                      ) : null}
                     </div>
                     <p className="text-[11px] text-neutral-400 mt-2 line-clamp-2">
                       {course.description}
@@ -248,60 +431,197 @@ export default function AcademyWorkspace({
               })}
             </div>
 
-            {/* Curriculum lessons list */}
+            {/* Curriculum lessons list & Active Quiz Screen */}
             <div className="md:col-span-2 bg-white/[0.02] border border-white/5 p-6 rounded-[2.5rem] shadow-xl space-y-6">
-              <div>
-                <h3 className="font-bold text-white text-base tracking-tight">{selectedCourse.title}</h3>
-                <p className="text-xs text-neutral-400 mt-1 leading-relaxed">{selectedCourse.description}</p>
-              </div>
+              {activeQuizCourseId === selectedCourse.id ? (
+                // Active Interactive Quiz Panel
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between border-b border-white/5 pb-4">
+                    <div className="flex items-center gap-2">
+                      <FileText className="w-5 h-5 text-emerald-400" />
+                      <span className="text-sm font-extrabold text-white">Certification Exam: {selectedCourse.title}</span>
+                    </div>
+                    <button 
+                      onClick={() => setActiveQuizCourseId(null)}
+                      className="text-xs text-neutral-400 hover:text-white px-2.5 py-1 bg-white/5 hover:bg-white/10 rounded-lg transition"
+                    >
+                      Cancel Exam
+                    </button>
+                  </div>
 
-              <div className="space-y-3">
-                {selectedCourse.lessons.map((lesson) => (
-                  <div
-                    key={lesson.id}
-                    className="flex items-center justify-between p-4 bg-white/[0.02] hover:bg-white/[0.04] border border-white/5 rounded-2xl text-xs transition duration-150"
-                  >
-                    <div className="flex items-center gap-3">
-                      <button
-                        onClick={() => handleLessonToggle(selectedCourse.id, lesson.id)}
-                        className={`p-1 rounded-full transition cursor-pointer ${
-                          lesson.completed ? "text-emerald-500 hover:text-neutral-500" : "text-neutral-600 hover:text-emerald-500"
-                        }`}
-                      >
-                        <CheckCircle2 className="w-5 h-5 fill-current" />
-                      </button>
-                      <div>
-                        <span className="font-bold text-neutral-100 block">{lesson.title}</span>
-                        <span className="text-[10px] text-neutral-400 font-mono">Duration: {lesson.duration}</span>
+                  {quizScore === null ? (
+                    // Quiz questions presentation
+                    <div className="space-y-6">
+                      <div className="flex justify-between text-xs font-mono font-bold text-neutral-400">
+                        <span>QUESTION {quizQuestionIdx + 1} OF {(QUIZZES[activeQuizCourseId] || []).length}</span>
+                        <span className="text-emerald-400">RBA Academic Standard</span>
+                      </div>
+
+                      <h4 className="text-sm font-extrabold text-white leading-relaxed">
+                        {(QUIZZES[activeQuizCourseId || ""] || [])[quizQuestionIdx]?.question}
+                      </h4>
+
+                      <div className="space-y-2">
+                        {(QUIZZES[activeQuizCourseId || ""] || [])[quizQuestionIdx]?.options.map((opt, oIdx) => {
+                          const isSelected = quizAnswers[quizQuestionIdx] === oIdx;
+                          return (
+                            <button
+                              key={oIdx}
+                              onClick={() => handleSelectQuizOption(oIdx)}
+                              className={`w-full p-4 rounded-2xl text-left text-xs font-bold border transition duration-150 cursor-pointer ${
+                                isSelected
+                                  ? "bg-emerald-950/50 border-emerald-500/40 text-emerald-300"
+                                  : "bg-neutral-900/40 border-white/5 hover:border-white/15 text-neutral-300"
+                              }`}
+                            >
+                              <div className="flex items-center gap-3">
+                                <div className={`w-5 h-5 rounded-full border flex items-center justify-center font-bold text-[10px] ${
+                                  isSelected ? "border-emerald-400 text-emerald-300 bg-emerald-500/10" : "border-neutral-700 text-neutral-400"
+                                }`}>
+                                  {String.fromCharCode(65 + oIdx)}
+                                </div>
+                                <span>{opt}</span>
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      <div className="flex justify-end pt-2">
+                        <button
+                          onClick={handleNextQuizQuestion}
+                          disabled={quizAnswers[quizQuestionIdx] === undefined}
+                          className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 text-white rounded-xl text-xs font-black transition flex items-center gap-1.5 cursor-pointer"
+                        >
+                          <span>{quizQuestionIdx < (QUIZZES[activeQuizCourseId || ""] || []).length - 1 ? "Next Question" : "Submit Exam"}</span>
+                          <ArrowRight className="w-4 h-4" />
+                        </button>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => onTriggerAiExplain(`Please explain the concept and key takeaways of the lesson: "${lesson.title}" from the course "${selectedCourse.title}" in a clear, easy-to-understand way, including objection-handling examples.`)}
-                        className="flex items-center gap-1.5 bg-emerald-600/10 hover:bg-emerald-600/20 text-emerald-400 border border-emerald-500/20 rounded-xl px-3 py-2 text-[10px] font-bold transition cursor-pointer"
-                      >
-                        <Sparkles className="w-3.5 h-3.5" />
-                        <span>AI Explain</span>
-                      </button>
-                      <button className="flex items-center gap-1 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white rounded-xl px-3 py-2 text-[10px] font-bold transition cursor-pointer">
-                        <Play className="w-3.5 h-3.5 fill-current shrink-0" />
-                        <span>Play</span>
-                      </button>
+                  ) : (
+                    // Quiz grading reports
+                    <div className="text-center py-6 space-y-6 max-w-md mx-auto">
+                      {quizScore === (QUIZZES[activeQuizCourseId || ""] || []).length ? (
+                        // Perfect Score: Certified!
+                        <>
+                          <div className="w-14 h-14 bg-emerald-500/10 border border-emerald-500/20 rounded-full flex items-center justify-center text-emerald-400 mx-auto">
+                            <Check className="w-8 h-8" />
+                          </div>
+                          <div className="space-y-1">
+                            <h3 className="text-base font-black text-white">Congratulations! Exam Passed 100%</h3>
+                            <p className="text-xs text-neutral-400">
+                              You answered all questions correctly and satisfied the accreditation requirements for <strong className="text-emerald-300 font-extrabold">{selectedCourse.title}</strong>.
+                            </p>
+                          </div>
+                          <div className="bg-emerald-950/30 border border-emerald-500/10 p-4 rounded-xl text-xs text-emerald-400 font-bold">
+                            🏆 Your dynamic verified certificate is ready under the "Certificates" tab.
+                          </div>
+                          <button
+                            onClick={() => {
+                              setActiveQuizCourseId(null);
+                              setActiveSubTab("certificates");
+                            }}
+                            className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-black transition cursor-pointer"
+                          >
+                            Claim Digital Certificate
+                          </button>
+                        </>
+                      ) : (
+                        // Failed Score: Retry
+                        <>
+                          <div className="w-14 h-14 bg-rose-500/10 border border-rose-500/20 rounded-full flex items-center justify-center text-rose-400 mx-auto">
+                            <AlertCircle className="w-8 h-8" />
+                          </div>
+                          <div className="space-y-1">
+                            <h3 className="text-base font-black text-white">Exam Not Cleared ({quizScore}/3)</h3>
+                            <p className="text-xs text-neutral-400">
+                              RBA professional certification requires a perfect score of 100% (3/3 answers correct) to ensure compliance standards.
+                            </p>
+                          </div>
+                          <button
+                            onClick={() => startQuiz(activeQuizCourseId || "")}
+                            className="w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-xl text-xs font-black transition flex items-center justify-center gap-2 cursor-pointer"
+                          >
+                            <RotateCcw className="w-4 h-4" />
+                            <span>Retry Exam</span>
+                          </button>
+                        </>
+                      )}
                     </div>
-                  </div>
-                ))}
-              </div>
-
-              {selectedCourse.lessons.every((l) => l.completed) && (
-                <div className="bg-emerald-500/10 border border-emerald-500/20 p-5 rounded-2xl text-emerald-400 text-xs flex gap-3 items-center">
-                  <Award className="w-6 h-6 text-emerald-400 shrink-0 animate-bounce" />
-                  <div>
-                    <span className="font-extrabold block text-sm">Certification Available!</span>
-                    <p className="text-[11px] opacity-90 mt-0.5">
-                      You have passed all modules of the {selectedCourse.title}. You can now view and download your digital certification.
-                    </p>
-                  </div>
+                  )}
                 </div>
+              ) : (
+                // Course curriculum lessons view
+                <>
+                  <div>
+                    <h3 className="font-bold text-white text-base tracking-tight">{selectedCourse.title}</h3>
+                    <p className="text-xs text-neutral-400 mt-1 leading-relaxed">{selectedCourse.description}</p>
+                  </div>
+
+                  <div className="space-y-3">
+                    {selectedCourse.lessons.map((lesson) => (
+                      <div
+                        key={lesson.id}
+                        className="flex items-center justify-between p-4 bg-white/[0.02] hover:bg-white/[0.04] border border-white/5 rounded-2xl text-xs transition duration-150"
+                      >
+                        <div className="flex items-center gap-3">
+                          <button
+                            onClick={() => handleLessonToggle(selectedCourse.id, lesson.id)}
+                            className={`p-1 rounded-full transition cursor-pointer ${
+                              lesson.completed ? "text-emerald-500 hover:text-neutral-500" : "text-neutral-600 hover:text-emerald-500"
+                            }`}
+                          >
+                            <CheckCircle2 className="w-5 h-5 fill-current" />
+                          </button>
+                          <div>
+                            <span className="font-bold text-neutral-100 block">{lesson.title}</span>
+                            <span className="text-[10px] text-neutral-400 font-mono">Duration: {lesson.duration}</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => onTriggerAiExplain(`Please explain the concept and key takeaways of the lesson: "${lesson.title}" from the course "${selectedCourse.title}" in a clear, easy-to-understand way, including objection-handling examples.`)}
+                            className="flex items-center gap-1.5 bg-emerald-600/10 hover:bg-emerald-600/20 text-emerald-400 border border-emerald-500/20 rounded-xl px-3 py-2 text-[10px] font-bold transition cursor-pointer"
+                          >
+                            <Sparkles className="w-3.5 h-3.5" />
+                            <span>AI Explain</span>
+                          </button>
+                          <button className="flex items-center gap-1 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white rounded-xl px-3 py-2 text-[10px] font-bold transition cursor-pointer">
+                            <Play className="w-3.5 h-3.5 fill-current shrink-0" />
+                            <span>Play</span>
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {selectedCourse.lessons.every((l) => l.completed) && (
+                    <div className="bg-emerald-500/10 border border-emerald-500/20 p-5 rounded-3xl text-emerald-400 text-xs flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                      <div className="flex gap-3 items-center">
+                        <Award className="w-6 h-6 text-emerald-400 shrink-0 animate-bounce" />
+                        <div>
+                          <span className="font-extrabold block text-sm">Certification Available!</span>
+                          <p className="text-[11px] opacity-90 mt-0.5">
+                            You have completed all mandatory modules. Clear the certification quiz to unlock your official credential.
+                          </p>
+                        </div>
+                      </div>
+                      
+                      {completedCourseIds.includes(selectedCourse.id) ? (
+                        <div className="text-xs font-bold text-emerald-400 bg-emerald-500/20 border border-emerald-500/30 px-3.5 py-1.5 rounded-xl font-mono self-stretch sm:self-auto text-center">
+                          ✓ Certified Partner
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => startQuiz(selectedCourse.id)}
+                          className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-black transition whitespace-nowrap self-stretch sm:self-auto cursor-pointer"
+                        >
+                          Start Certification Exam
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </motion.div>
@@ -462,7 +782,7 @@ export default function AcademyWorkspace({
                   return (
                     <div
                       key={courseId}
-                      className="bg-gradient-to-br from-neutral-950 via-neutral-900 to-emerald-950 border-2 border-emerald-500/25 p-8 rounded-[2rem] shadow-2xl relative overflow-hidden space-y-6 flex flex-col justify-between min-h-[340px]"
+                      className="bg-gradient-to-br from-neutral-950 via-neutral-900 to-emerald-950 border-2 border-emerald-500/25 p-8 rounded-[2rem] shadow-2xl relative overflow-hidden space-y-6 flex flex-col justify-between min-h-[360px]"
                     >
                       <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-2xl" />
                       
@@ -500,9 +820,15 @@ export default function AcademyWorkspace({
                           <p className="text-[10px] text-neutral-500 font-mono">CERTIFICATE ID</p>
                           <span className="text-[11px] font-mono text-emerald-400 font-bold">{certId}</span>
                         </div>
-                        <div className="flex items-center gap-2 text-emerald-400 text-xs font-bold bg-emerald-500/5 border border-emerald-500/10 px-3 py-1.5 rounded-xl">
-                          <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                          <span>QR Verified</span>
+                        <div className="flex items-center gap-4">
+                          <div className="flex flex-col items-end gap-1">
+                            <div className="flex items-center gap-1.5 text-emerald-400 text-xs font-bold bg-emerald-500/5 border border-emerald-500/10 px-2.5 py-1 rounded-lg">
+                              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                              <span>QR Verified</span>
+                            </div>
+                            <span className="text-[8px] font-mono text-neutral-500">Scan to verify</span>
+                          </div>
+                          {renderQrCodeSvg(`https://rba-academy.web.app/verify/${certId}`)}
                         </div>
                       </div>
                     </div>

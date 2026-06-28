@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { User, Shield, Key, Volume2, Globe, Sparkles, Brain, Bell, Moon, LogOut, Check, RefreshCw, Plus, X } from "lucide-react";
+import { User, Shield, Key, Volume2, Globe, Sparkles, Brain, Bell, Moon, LogOut, Check, RefreshCw, Plus, X, Trophy, Share2 } from "lucide-react";
 import { motion } from "motion/react";
 import { UserProfile } from "../types";
+import AchievementsReferralsModule from "./AchievementsReferralsModule";
 
 interface ProfileMemoryWorkspaceProps {
   currentUser: UserProfile | null;
@@ -16,6 +17,9 @@ export default function ProfileMemoryWorkspace({
   onClearMemory,
   onLogout,
 }: ProfileMemoryWorkspaceProps) {
+  // Navigation sub-tab
+  const [subTab, setSubTab] = useState<"memory" | "achievements">("memory");
+
   // AI Memory state
   const [learningGoals, setLearningGoals] = useState(currentUser?.learningGoals || "");
   const [businessDetails, setBusinessDetails] = useState(currentUser?.businessDetails || "");
@@ -129,229 +133,266 @@ export default function ProfileMemoryWorkspace({
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {/* Memory Form Panel */}
-        <div className="md:col-span-2 space-y-6">
-          <form onSubmit={handleSaveMemory} className="bg-white/[0.02] border border-white/5 p-6 rounded-[2.5rem] shadow-xl space-y-6">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-emerald-600/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center">
-                <Brain className="w-5 h-5" />
+      {/* Sub-tab Selectors */}
+      <div className="flex border-b border-white/5 pb-2 gap-4">
+        <button
+          onClick={() => setSubTab("memory")}
+          className={`pb-2.5 text-xs font-bold transition relative cursor-pointer ${
+            subTab === "memory" ? "text-white font-black" : "text-neutral-450 hover:text-white"
+          }`}
+        >
+          <span className="flex items-center gap-2">
+            <Brain className="w-4 h-4" />
+            <span>AI Memory & Preferences</span>
+          </span>
+          {subTab === "memory" && (
+            <motion.div layoutId="profile-subtab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-400" />
+          )}
+        </button>
+
+        <button
+          onClick={() => setSubTab("achievements")}
+          className={`pb-2.5 text-xs font-bold transition relative cursor-pointer ${
+            subTab === "achievements" ? "text-white font-black" : "text-neutral-450 hover:text-white"
+          }`}
+        >
+          <span className="flex items-center gap-2">
+            <Trophy className="w-4 h-4" />
+            <span>Badges & Referrals</span>
+          </span>
+          {subTab === "achievements" && (
+            <motion.div layoutId="profile-subtab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-400" />
+          )}
+        </button>
+      </div>
+
+      {subTab === "memory" ? (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* Memory Form Panel */}
+          <div className="md:col-span-2 space-y-6">
+            <form onSubmit={handleSaveMemory} className="bg-white/[0.02] border border-white/5 p-6 rounded-[2.5rem] shadow-xl space-y-6">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-emerald-600/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center">
+                  <Brain className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-extrabold text-white text-sm">Personal AI Memory Workspace</h3>
+                  <p className="text-[10px] text-neutral-400">Settings here dynamically influence the AI Tutor, Coaches, and Assistants</p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-extrabold text-white text-sm">Personal AI Memory Workspace</h3>
-                <p className="text-[10px] text-neutral-400">Settings here dynamically influence the AI Tutor, Coaches, and Assistants</p>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="text-[10px] font-bold text-neutral-400 block mb-1.5 uppercase font-mono tracking-widest">
+                    Learning Goals
+                  </label>
+                  <textarea
+                    value={learningGoals}
+                    onChange={(e) => setLearningGoals(e.target.value)}
+                    placeholder="Master loan advisory structures, clear sales roleplay objections..."
+                    rows={2}
+                    className="w-full bg-neutral-900 border border-white/10 rounded-xl p-3 text-xs font-bold text-white outline-none focus:border-emerald-500/50 transition resize-none placeholder:text-neutral-600"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-[10px] font-bold text-neutral-400 block mb-1.5 uppercase font-mono tracking-widest">
+                    Business & Role Details
+                  </label>
+                  <textarea
+                    value={businessDetails}
+                    onChange={(e) => setBusinessDetails(e.target.value)}
+                    placeholder="Independent financial consultant, branch manager of RBA corporate office..."
+                    rows={2}
+                    className="w-full bg-neutral-900 border border-white/10 rounded-xl p-3 text-xs font-bold text-white outline-none focus:border-emerald-500/50 transition resize-none placeholder:text-neutral-600"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-[10px] font-bold text-neutral-400 block mb-1.5 uppercase font-mono tracking-widest">
+                      AI Writing Style
+                    </label>
+                    <input
+                      value={writingStyle}
+                      onChange={(e) => setWritingStyle(e.target.value)}
+                      placeholder="Clear, professional, bulleted summaries"
+                      className="w-full bg-neutral-900 border border-white/10 rounded-xl p-3 text-xs font-bold text-white outline-none focus:border-emerald-500/50 transition placeholder:text-neutral-600"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] font-bold text-neutral-400 block mb-1.5 uppercase font-mono tracking-widest">
+                      Preferred Language
+                    </label>
+                    <select
+                      value={languagePreference}
+                      onChange={(e) => setLanguagePreference(e.target.value)}
+                      className="w-full bg-neutral-900 border border-white/10 rounded-xl p-3 text-xs font-bold text-white outline-none"
+                    >
+                      <option value="en">English Only (en)</option>
+                      <option value="hi">Bilingual Mixed (Hinglish)</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Pinned Knowledge array list */}
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-neutral-400 block mb-1.5 uppercase font-mono tracking-widest">
+                    Pinned Knowledge Assets
+                  </label>
+                  
+                  <div className="flex gap-2">
+                    <input
+                      value={newKnowledgeInput}
+                      onChange={(e) => setNewKnowledgeInput(e.target.value)}
+                      placeholder="Add specific facts e.g. 'Maximum personal loan limit is 50 Lacs'"
+                      className="flex-1 bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-xs font-bold text-white outline-none focus:border-emerald-500/50 transition placeholder:text-neutral-600"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleAddKnowledge}
+                      className="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition flex items-center justify-center cursor-pointer"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  <div className="space-y-1.5 max-h-36 overflow-y-auto pt-1">
+                    {pinnedKnowledgeList.map((fact, index) => (
+                      <div
+                        key={index}
+                        className="bg-white/5 border border-white/5 rounded-xl px-3 py-2 flex items-center justify-between text-xs text-neutral-300"
+                      >
+                        <span className="truncate font-sans font-medium">{fact}</span>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveKnowledge(index)}
+                          className="text-neutral-500 hover:text-rose-400 p-1 rounded-lg transition"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center border-t border-white/5 pt-4">
+                <button
+                  type="button"
+                  onClick={handleClearMemoryTrigger}
+                  disabled={clearing}
+                  className="px-4 py-2 bg-rose-950/20 hover:bg-rose-950/40 text-rose-400 hover:text-rose-300 border border-rose-500/10 rounded-xl text-xs font-bold transition disabled:opacity-40 cursor-pointer"
+                >
+                  Clear AI Memory
+                </button>
+
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-black transition flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
+                >
+                  {saving ? (
+                    <>
+                      <RefreshCw className="w-4 h-4 animate-spin" />
+                      <span>Saving...</span>
+                    </>
+                  ) : success ? (
+                    <>
+                      <Check className="w-4 h-4 text-emerald-300" />
+                      <span>Memory Synced</span>
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-4 h-4 text-amber-300" />
+                      <span>Sync AI Memory</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+
+          {/* General App Config preferences (Theme / Subscription / Notifications) */}
+          <div className="space-y-6">
+            {/* Subscription Info */}
+            <div className="bg-gradient-to-br from-neutral-950 to-emerald-950 border border-emerald-500/20 p-6 rounded-[2rem] shadow-xl space-y-4">
+              <div className="flex items-center gap-2">
+                <Shield className="w-5 h-5 text-emerald-400" />
+                <span className="text-xs font-black text-white uppercase tracking-wider font-mono">Subscription Plan</span>
+              </div>
+              
+              <div className="space-y-1">
+                <h4 className="text-lg font-black text-white tracking-tight">RBA Enterprise Pro</h4>
+                <p className="text-[10px] text-neutral-400">Unlimited AI tutor requests, live objections simulations, and verified certificate exports.</p>
+              </div>
+
+              <div className="pt-2 border-t border-white/5 text-[11px] font-mono text-emerald-400 font-bold flex justify-between">
+                <span>Status:</span>
+                <span>Active (Auto-renew)</span>
               </div>
             </div>
 
-            <div className="space-y-4">
-              <div>
-                <label className="text-[10px] font-bold text-neutral-400 block mb-1.5 uppercase font-mono tracking-widest">
-                  Learning Goals
-                </label>
-                <textarea
-                  value={learningGoals}
-                  onChange={(e) => setLearningGoals(e.target.value)}
-                  placeholder="Master loan advisory structures, clear sales roleplay objections..."
-                  rows={2}
-                  className="w-full bg-neutral-900 border border-white/10 rounded-xl p-3 text-xs font-bold text-white outline-none focus:border-emerald-500/50 transition resize-none placeholder:text-neutral-600"
-                />
-              </div>
+            {/* Preferences toggles */}
+            <div className="bg-white/[0.02] border border-white/5 p-6 rounded-[2rem] shadow-xl space-y-5">
+              <h4 className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest font-mono">
+                App Preferences
+              </h4>
 
-              <div>
-                <label className="text-[10px] font-bold text-neutral-400 block mb-1.5 uppercase font-mono tracking-widest">
-                  Business & Role Details
-                </label>
-                <textarea
-                  value={businessDetails}
-                  onChange={(e) => setBusinessDetails(e.target.value)}
-                  placeholder="Independent financial consultant, branch manager of RBA corporate office..."
-                  rows={2}
-                  className="w-full bg-neutral-900 border border-white/10 rounded-xl p-3 text-xs font-bold text-white outline-none focus:border-emerald-500/50 transition resize-none placeholder:text-neutral-600"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-[10px] font-bold text-neutral-400 block mb-1.5 uppercase font-mono tracking-widest">
-                    AI Writing Style
-                  </label>
-                  <input
-                    value={writingStyle}
-                    onChange={(e) => setWritingStyle(e.target.value)}
-                    placeholder="Clear, professional, bulleted summaries"
-                    className="w-full bg-neutral-900 border border-white/10 rounded-xl p-3 text-xs font-bold text-white outline-none focus:border-emerald-500/50 transition placeholder:text-neutral-600"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-[10px] font-bold text-neutral-400 block mb-1.5 uppercase font-mono tracking-widest">
-                    Preferred Language
-                  </label>
-                  <select
-                    value={languagePreference}
-                    onChange={(e) => setLanguagePreference(e.target.value)}
-                    className="w-full bg-neutral-900 border border-white/10 rounded-xl p-3 text-xs font-bold text-white outline-none"
-                  >
-                    <option value="en">English Only (en)</option>
-                    <option value="hi">Bilingual Mixed (Hinglish)</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Pinned Knowledge array list */}
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold text-neutral-400 block mb-1.5 uppercase font-mono tracking-widest">
-                  Pinned Knowledge Assets
-                </label>
-                
-                <div className="flex gap-2">
-                  <input
-                    value={newKnowledgeInput}
-                    onChange={(e) => setNewKnowledgeInput(e.target.value)}
-                    placeholder="Add specific facts e.g. 'Maximum personal loan limit is 50 Lacs'"
-                    className="flex-1 bg-neutral-900 border border-white/10 rounded-xl px-3 py-2 text-xs font-bold text-white outline-none focus:border-emerald-500/50 transition placeholder:text-neutral-600"
-                  />
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 bg-white/5 border border-white/10 rounded-xl text-neutral-400">
+                      <Bell className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <span className="text-xs font-bold text-neutral-100 block">Push Notifications</span>
+                      <span className="text-[10px] text-neutral-500">Certificate alerts, reminders</span>
+                    </div>
+                  </div>
                   <button
                     type="button"
-                    onClick={handleAddKnowledge}
-                    className="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition flex items-center justify-center cursor-pointer"
+                    onClick={() => setNotificationsEnabled(!notificationsEnabled)}
+                    className={`w-10 h-6 rounded-full p-1 transition ${
+                      notificationsEnabled ? "bg-emerald-600" : "bg-neutral-800"
+                    }`}
                   >
-                    <Plus className="w-4 h-4" />
+                    <div className={`w-4 h-4 bg-white rounded-full transition-all duration-200 ${
+                      notificationsEnabled ? "translate-x-4" : ""
+                    }`} />
                   </button>
                 </div>
 
-                <div className="space-y-1.5 max-h-36 overflow-y-auto pt-1">
-                  {pinnedKnowledgeList.map((fact, index) => (
-                    <div
-                      key={index}
-                      className="bg-white/5 border border-white/5 rounded-xl px-3 py-2 flex items-center justify-between text-xs text-neutral-300"
-                    >
-                      <span className="truncate font-sans font-medium">{fact}</span>
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveKnowledge(index)}
-                        className="text-neutral-500 hover:text-rose-400 p-1 rounded-lg transition"
-                      >
-                        <X className="w-3.5 h-3.5" />
-                      </button>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 bg-white/5 border border-white/10 rounded-xl text-neutral-400">
+                      <Moon className="w-4 h-4" />
                     </div>
-                  ))}
+                    <div>
+                      <span className="text-xs font-bold text-neutral-100 block">Dark Cosmic Theme</span>
+                      <span className="text-[10px] text-neutral-500">Protect eyes during study</span>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setDarkModeEnabled(!darkModeEnabled)}
+                    className={`w-10 h-6 rounded-full p-1 transition ${
+                      darkModeEnabled ? "bg-emerald-600" : "bg-neutral-800"
+                    }`}
+                  >
+                    <div className={`w-4 h-4 bg-white rounded-full transition-all duration-200 ${
+                      darkModeEnabled ? "translate-x-4" : ""
+                    }`} />
+                  </button>
                 </div>
-              </div>
-            </div>
-
-            <div className="flex justify-between items-center border-t border-white/5 pt-4">
-              <button
-                type="button"
-                onClick={handleClearMemoryTrigger}
-                disabled={clearing}
-                className="px-4 py-2 bg-rose-950/20 hover:bg-rose-950/40 text-rose-400 hover:text-rose-300 border border-rose-500/10 rounded-xl text-xs font-bold transition disabled:opacity-40 cursor-pointer"
-              >
-                Clear AI Memory
-              </button>
-
-              <button
-                type="submit"
-                disabled={saving}
-                className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-black transition flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
-              >
-                {saving ? (
-                  <>
-                    <RefreshCw className="w-4 h-4 animate-spin" />
-                    <span>Saving...</span>
-                  </>
-                ) : success ? (
-                  <>
-                    <Check className="w-4 h-4 text-emerald-300" />
-                    <span>Memory Synced</span>
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-4 h-4 text-amber-300" />
-                    <span>Sync AI Memory</span>
-                  </>
-                )}
-              </button>
-            </div>
-          </form>
-        </div>
-
-        {/* General App Config preferences (Theme / Subscription / Notifications) */}
-        <div className="space-y-6">
-          {/* Subscription Info */}
-          <div className="bg-gradient-to-br from-neutral-950 to-emerald-950 border border-emerald-500/20 p-6 rounded-[2rem] shadow-xl space-y-4">
-            <div className="flex items-center gap-2">
-              <Shield className="w-5 h-5 text-emerald-400" />
-              <span className="text-xs font-black text-white uppercase tracking-wider font-mono">Subscription Plan</span>
-            </div>
-            
-            <div className="space-y-1">
-              <h4 className="text-lg font-black text-white tracking-tight">RBA Enterprise Pro</h4>
-              <p className="text-[10px] text-neutral-400">Unlimited AI tutor requests, live objections simulations, and verified certificate exports.</p>
-            </div>
-
-            <div className="pt-2 border-t border-white/5 text-[11px] font-mono text-emerald-400 font-bold flex justify-between">
-              <span>Status:</span>
-              <span>Active (Auto-renew)</span>
-            </div>
-          </div>
-
-          {/* Preferences toggles */}
-          <div className="bg-white/[0.02] border border-white/5 p-6 rounded-[2rem] shadow-xl space-y-5">
-            <h4 className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest font-mono">
-              App Preferences
-            </h4>
-
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="p-2.5 bg-white/5 border border-white/10 rounded-xl text-neutral-400">
-                    <Bell className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <span className="text-xs font-bold text-neutral-100 block">Push Notifications</span>
-                    <span className="text-[10px] text-neutral-500">Certificate alerts, reminders</span>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setNotificationsEnabled(!notificationsEnabled)}
-                  className={`w-10 h-6 rounded-full p-1 transition ${
-                    notificationsEnabled ? "bg-emerald-600" : "bg-neutral-800"
-                  }`}
-                >
-                  <div className={`w-4 h-4 bg-white rounded-full transition-all duration-200 ${
-                    notificationsEnabled ? "translate-x-4" : ""
-                  }`} />
-                </button>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="p-2.5 bg-white/5 border border-white/10 rounded-xl text-neutral-400">
-                    <Moon className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <span className="text-xs font-bold text-neutral-100 block">Dark Cosmic Theme</span>
-                    <span className="text-[10px] text-neutral-500">Protect eyes during study</span>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setDarkModeEnabled(!darkModeEnabled)}
-                  className={`w-10 h-6 rounded-full p-1 transition ${
-                    darkModeEnabled ? "bg-emerald-600" : "bg-neutral-800"
-                  }`}
-                >
-                  <div className={`w-4 h-4 bg-white rounded-full transition-all duration-200 ${
-                    darkModeEnabled ? "translate-x-4" : ""
-                  }`} />
-                </button>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <AchievementsReferralsModule currentUser={currentUser} />
+      )}
     </div>
   );
 }

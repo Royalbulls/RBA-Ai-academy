@@ -52,6 +52,48 @@ export default function App() {
   // Overlays
   const [showNotifications, setShowNotifications] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
+  
+  // Real-time Push and Notification Center Storage
+  const [notifications, setNotifications] = useState<Array<{ id: string; title: string; text: string; time: string; read: boolean }>>([
+    {
+      id: "1",
+      title: "System Engaged",
+      text: "RBA AI Learning OS completed its production deployment checks successfully.",
+      time: "Just now",
+      read: false,
+    },
+    {
+      id: "2",
+      title: "Academy Welcome",
+      text: "Explore your interactive course curriculum and unlock your dynamic certifications.",
+      time: "10m ago",
+      read: false,
+    },
+    {
+      id: "3",
+      title: "Business OS Loaded",
+      text: "Financial Loan Advisor, Sales Coach, and Mentorship models compiled successfully.",
+      time: "1h ago",
+      read: true,
+    }
+  ]);
+  const [activeToast, setActiveToast] = useState<{ title: string; text: string } | null>(null);
+
+  const handleNotificationCreated = (title: string, text: string) => {
+    const newNotification = {
+      id: Math.random().toString(),
+      title,
+      text,
+      time: "Just now",
+      read: false,
+    };
+    setNotifications(prev => [newNotification, ...prev]);
+    setActiveToast({ title, text });
+    // Dismiss toast after 4 seconds
+    setTimeout(() => {
+      setActiveToast(null);
+    }, 4000);
+  };
 
   // Sync Auth listener
   useEffect(() => {
@@ -366,7 +408,10 @@ export default function App() {
     const nextCompleted = [...completedCourseIds, courseId];
     setCompletedCourseIds(nextCompleted);
     localStorage.setItem(`completed_courses_${currentUser.id}`, JSON.stringify(nextCompleted));
-    alert(`Congratulations! You have earned the certified Specialist Badge for ${courseTitle}!`);
+    handleNotificationCreated(
+      "Certification Unlocked!",
+      `Congratulations! You have successfully earned your verified Specialist Badge for "${courseTitle}"!`
+    );
   };
 
   const handleLogout = async () => {
@@ -424,7 +469,11 @@ export default function App() {
                 className="p-2.5 text-neutral-400 hover:text-white hover:bg-white/5 border border-white/5 rounded-xl transition relative cursor-pointer"
               >
                 <Bell className="w-4 h-4" />
-                <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                {notifications.some((n) => !n.read) && (
+                  <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500 text-[9px] font-black text-neutral-950 animate-pulse">
+                    {notifications.filter((n) => !n.read).length}
+                  </span>
+                )}
               </button>
               <button
                 onClick={() => setShowHelp(true)}
@@ -636,7 +685,7 @@ export default function App() {
                         </div>
 
                         <div className="bg-neutral-900/10 border border-white/5 rounded-[2rem] p-6 shadow-2xl bg-gradient-to-b from-neutral-900/25 to-transparent">
-                          {businessSubTab === "loans" && <LoanWorkflow currentUser={currentUser} />}
+                          {businessSubTab === "loans" && <LoanWorkflow currentUser={currentUser} onNotificationCreated={handleNotificationCreated} />}
                           {businessSubTab === "marketplace" && (
                             <OtherModules 
                               currentUser={currentUser} 
@@ -659,6 +708,7 @@ export default function App() {
                       <RbaServicesHub 
                         currentUser={currentUser} 
                         onTriggerAiWithQuery={handleStartNewChatWithPrompt} 
+                        onNotificationCreated={handleNotificationCreated}
                       />
                     )}
 
@@ -729,31 +779,39 @@ export default function App() {
                   </button>
                 </div>
 
-                <div className="space-y-3">
-                  <div className="p-4 bg-white/[0.02] border border-white/5 rounded-2xl text-xs space-y-1">
-                    <div className="flex justify-between items-center">
-                      <span className="font-black text-white">System Synchronized</span>
-                      <span className="text-[9px] text-neutral-500 font-mono">1 min ago</span>
+                <div className="space-y-3 overflow-y-auto max-h-[70vh]">
+                  {notifications.map((n) => (
+                    <div
+                      key={n.id}
+                      className={`p-4 border rounded-2xl text-xs space-y-1 transition duration-150 relative ${
+                        n.read ? "bg-white/[0.01] border-white/5 opacity-60" : "bg-emerald-950/10 border-emerald-500/20 shadow-md"
+                      }`}
+                    >
+                      {!n.read && (
+                        <div className="absolute top-4 right-4 w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+                      )}
+                      <div className="flex justify-between items-center">
+                        <span className="font-black text-white">{n.title}</span>
+                        <span className="text-[9px] text-neutral-500 font-mono">{n.time}</span>
+                      </div>
+                      <p className="text-neutral-400 leading-relaxed pr-4">
+                        {n.text}
+                      </p>
                     </div>
-                    <p className="text-neutral-400 leading-relaxed">
-                      AI Memory workspace has successfully compiled across security domains.
-                    </p>
-                  </div>
-
-                  <div className="p-4 bg-white/[0.02] border border-white/5 rounded-2xl text-xs space-y-1">
-                    <div className="flex justify-between items-center">
-                      <span className="font-black text-white">Academy Welcome Badge</span>
-                      <span className="text-[9px] text-neutral-500 font-mono">Today</span>
+                  ))}
+                  {notifications.length === 0 && (
+                    <div className="text-center py-10 text-neutral-500 text-xs font-mono">
+                      No notifications available
                     </div>
-                    <p className="text-neutral-400 leading-relaxed">
-                      Complete Objection Handling simulated roleplay to unlock certified badges.
-                    </p>
-                  </div>
+                  )}
                 </div>
               </div>
 
               <button
-                onClick={() => setShowNotifications(false)}
+                onClick={() => {
+                  setNotifications(notifications.map(n => ({ ...n, read: true })));
+                  setShowNotifications(false);
+                }}
                 className="w-full py-3 bg-white/5 hover:bg-white/10 text-white font-bold text-xs rounded-xl transition border border-white/10"
               >
                 Mark all as read
@@ -817,6 +875,32 @@ export default function App() {
               </div>
             </motion.div>
           </div>
+        )}
+      </AnimatePresence>
+
+      {/* Real-time In-App Push Notification Toast */}
+      <AnimatePresence>
+        {activeToast && (
+          <motion.div
+            initial={{ opacity: 0, y: -50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            className="fixed top-6 right-6 z-[100] max-w-sm w-full bg-neutral-900/95 backdrop-blur-md border border-emerald-500/30 p-4 rounded-2xl shadow-2xl flex items-start gap-3"
+          >
+            <div className="p-2 bg-emerald-500/10 text-emerald-400 rounded-xl">
+              <Sparkles className="w-5 h-5 animate-pulse" />
+            </div>
+            <div className="flex-1 space-y-1">
+              <h4 className="font-extrabold text-white text-xs tracking-tight flex items-center justify-between">
+                <span>{activeToast.title}</span>
+                <span className="text-[9px] bg-emerald-500/20 text-emerald-400 font-mono px-1.5 py-0.5 rounded-md">Pushover Alert</span>
+              </h4>
+              <p className="text-neutral-300 text-xs leading-relaxed">
+                {activeToast.text}
+              </p>
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>
