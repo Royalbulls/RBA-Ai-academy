@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Sparkles, MessageSquare, GraduationCap, Pin, Search, ArrowRight, BookOpen, Trophy } from "lucide-react";
+import { Sparkles, MessageSquare, GraduationCap, Pin, Search, ArrowRight, BookOpen, Trophy, Briefcase, Landmark } from "lucide-react";
 import { motion } from "motion/react";
 import { Course } from "../types";
 
@@ -18,7 +18,7 @@ interface HomeWorkspaceProps {
   completedCourseIds: string[];
   onSelectConversation: (id: string) => void;
   onStartNewChatWithPrompt: (prompt: string) => void;
-  onNavigateToTab: (tab: "home" | "ai" | "academy" | "history" | "profile") => void;
+  onNavigateToTab: (tab: any) => void;
 }
 
 export default function HomeWorkspace({
@@ -133,6 +133,56 @@ export default function HomeWorkspace({
               </div>
             </button>
           ))}
+        </div>
+      </motion.div>
+
+      {/* AI OS Ecosystem Workspaces Panel */}
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.25 }}
+        className="space-y-4"
+        id="home-ai-os-workspaces"
+      >
+        <h3 className="font-extrabold text-xs uppercase tracking-widest text-neutral-500 font-mono">
+          AI Learning & Business OS Workspaces
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <button
+            onClick={() => onNavigateToTab("business_os")}
+            className="text-left p-6 rounded-[2rem] bg-gradient-to-br from-emerald-950/40 via-neutral-900/40 to-neutral-900/10 border border-emerald-500/10 hover:border-emerald-500/30 transition-all duration-300 group flex items-start gap-4 cursor-pointer hover:-translate-y-0.5"
+          >
+            <div className="w-12 h-12 bg-emerald-500/10 rounded-2xl flex items-center justify-center border border-emerald-500/20 shrink-0 group-hover:scale-110 transition duration-300">
+              <Briefcase className="w-5 h-5 text-emerald-400" />
+            </div>
+            <div className="space-y-1.5">
+              <span className="text-[10px] uppercase tracking-wider text-emerald-400 font-mono font-extrabold block">
+                Business OS Suite
+              </span>
+              <h4 className="font-black text-sm text-white">Advisor CRM & Loan Workflows</h4>
+              <p className="text-xs text-neutral-400 leading-relaxed font-medium">
+                Log and pipeline clients, scout incoming leads in real-time, register new loan requests, and withdraw commission ledger payouts.
+              </p>
+            </div>
+          </button>
+
+          <button
+            onClick={() => onNavigateToTab("rba_services")}
+            className="text-left p-6 rounded-[2rem] bg-gradient-to-br from-amber-950/20 via-neutral-900/40 to-neutral-900/10 border border-amber-500/10 hover:border-amber-500/30 transition-all duration-300 group flex items-start gap-4 cursor-pointer hover:-translate-y-0.5"
+          >
+            <div className="w-12 h-12 bg-amber-500/10 rounded-2xl flex items-center justify-center border border-amber-500/20 shrink-0 group-hover:scale-110 transition duration-300">
+              <Landmark className="w-5 h-5 text-amber-400" />
+            </div>
+            <div className="space-y-1.5">
+              <span className="text-[10px] uppercase tracking-wider text-amber-400 font-mono font-extrabold block">
+                RBA Corporate Services
+              </span>
+              <h4 className="font-black text-sm text-white">Royal Bulls Advisory Portal</h4>
+              <p className="text-xs text-neutral-400 leading-relaxed font-medium">
+                Directly request loan fundings, SIP wealth plans, GST compliance setups, company incorporations, and advanced business tech automations.
+              </p>
+            </div>
+          </button>
         </div>
       </motion.div>
 

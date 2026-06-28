@@ -10,10 +10,17 @@ import AiChatWorkspace from "./components/AiChatWorkspace";
 import AcademyWorkspace from "./components/AcademyWorkspace";
 import ChatHistoryList from "./components/ChatHistoryList";
 import ProfileMemoryWorkspace from "./components/ProfileMemoryWorkspace";
+import AdminPanel from "./components/AdminPanel";
+import CRMBoard from "./components/CRMBoard";
+import LoanWorkflow from "./components/LoanWorkflow";
+import WalletDashboard from "./components/WalletDashboard";
+import OtherModules from "./components/OtherModules";
+import RbaServicesHub from "./components/RbaServicesHub";
 
 import { 
   Sparkles, GraduationCap, Clock, User, MessageSquare, Home,
-  Menu, X, Bell, Settings, HelpCircle, LogOut, ChevronRight, Award
+  Menu, X, Bell, Settings, HelpCircle, LogOut, ChevronRight, Award,
+  Briefcase, Landmark, ShieldAlert
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -31,7 +38,8 @@ export default function App() {
   const [loadingAuth, setLoadingAuth] = useState(true);
 
   // Core navigation tabs
-  const [activeTab, setActiveTab] = useState<"home" | "ai" | "academy" | "history" | "profile">("home");
+  const [activeTab, setActiveTab] = useState<"home" | "ai" | "academy" | "business_os" | "rba_services" | "history" | "profile" | "admin">("home");
+  const [businessSubTab, setBusinessSubTab] = useState<"loans" | "marketplace" | "crm" | "wallet">("loans");
 
   // Conversations states
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -373,13 +381,16 @@ export default function App() {
     return conversations.filter(c => c.isPinned);
   };
 
-  // Sidebar Menu structure for desktop
+  // Dynamic Sidebar Menu structure based on user state
   const sideNavigation = [
     { label: "Home", tab: "home" as const, icon: Home },
     { label: "AI Personal Space", tab: "ai" as const, icon: Sparkles },
     { label: "Advisor Academy", tab: "academy" as const, icon: GraduationCap },
-    { label: "Workspace History", tab: "history" as const, icon: Clock },
+    { label: "Business OS", tab: "business_os" as const, icon: Briefcase },
+    { label: "RBA Services", tab: "rba_services" as const, icon: Landmark },
+    { label: "History", tab: "history" as const, icon: Clock },
     { label: "Profile & Memory", tab: "profile" as const, icon: User },
+    ...(currentUser?.role === "admin" ? [{ label: "Admin Panel", tab: "admin" as const, icon: ShieldAlert }] : []),
   ];
 
   const COURSES_STATIC: Course[] = [
@@ -589,6 +600,71 @@ export default function App() {
                         onLogout={handleLogout}
                       />
                     )}
+
+                    {activeTab === "business_os" && (
+                      <div className="space-y-6">
+                        <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-white/5 pb-4 gap-4">
+                          <div>
+                            <h2 className="text-xl font-extrabold text-white tracking-tight flex items-center gap-2">
+                              <Briefcase className="w-5 h-5 text-emerald-400" />
+                              <span>Business Operating System</span>
+                            </h2>
+                            <p className="text-xs text-neutral-400">Integrated suite for loans, client pipelines, lead scouting, and wallet ledgers.</p>
+                          </div>
+                          
+                          {/* Tab Selectors */}
+                          <div className="flex flex-wrap gap-1.5 bg-neutral-900/60 p-1 rounded-2xl border border-white/5">
+                            {[
+                              { id: "loans", label: "Loans" },
+                              { id: "marketplace", label: "Leads Shop" },
+                              { id: "crm", label: "Advisor CRM" },
+                              { id: "wallet", label: "Earnings Wallet" },
+                            ].map((sub) => (
+                              <button
+                                key={sub.id}
+                                onClick={() => setBusinessSubTab(sub.id as any)}
+                                className={`px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                                  businessSubTab === sub.id
+                                    ? "bg-white text-neutral-950 shadow-md font-black"
+                                    : "text-neutral-400 hover:text-white hover:bg-white/5"
+                                }`}
+                              >
+                                {sub.label}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="bg-neutral-900/10 border border-white/5 rounded-[2rem] p-6 shadow-2xl bg-gradient-to-b from-neutral-900/25 to-transparent">
+                          {businessSubTab === "loans" && <LoanWorkflow currentUser={currentUser} />}
+                          {businessSubTab === "marketplace" && (
+                            <OtherModules 
+                              currentUser={currentUser} 
+                              moduleType="marketplace" 
+                              onTriggerAiWithQuery={handleStartNewChatWithPrompt} 
+                            />
+                          )}
+                          {businessSubTab === "crm" && (
+                            <CRMBoard 
+                              currentUser={currentUser} 
+                              onTriggerAiWithQuery={handleStartNewChatWithPrompt} 
+                            />
+                          )}
+                          {businessSubTab === "wallet" && <WalletDashboard currentUser={currentUser} />}
+                        </div>
+                      </div>
+                    )}
+
+                    {activeTab === "rba_services" && (
+                      <RbaServicesHub 
+                        currentUser={currentUser} 
+                        onTriggerAiWithQuery={handleStartNewChatWithPrompt} 
+                      />
+                    )}
+
+                    {activeTab === "admin" && currentUser?.role === "admin" && (
+                      <AdminPanel />
+                    )}
                   </motion.div>
                 </AnimatePresence>
               )}
@@ -600,7 +676,13 @@ export default function App() {
       {/* Mobile Sticky Bottom Tab Bar */}
       {currentUser && (
         <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-neutral-950/95 border-t border-white/5 backdrop-blur px-2 py-3 flex justify-around items-center select-none shadow-2xl">
-          {sideNavigation.map((nav) => {
+          {[
+            { label: "Home", tab: "home" as const, icon: Home },
+            { label: "AI Space", tab: "ai" as const, icon: Sparkles },
+            { label: "Academy", tab: "academy" as const, icon: GraduationCap },
+            { label: "Business OS", tab: "business_os" as const, icon: Briefcase },
+            { label: "RBA Portal", tab: "rba_services" as const, icon: Landmark },
+          ].map((nav) => {
             const Icon = nav.icon;
             const isActive = activeTab === nav.tab;
             return (
@@ -616,7 +698,7 @@ export default function App() {
               >
                 <Icon className={`w-5 h-5 transition-transform duration-200 ${isActive ? "text-emerald-400 scale-110" : "text-neutral-500"}`} />
                 <span className={`text-[9px] mt-1 tracking-tight font-extrabold ${isActive ? "text-white" : "text-neutral-500 font-medium"}`}>
-                  {nav.label === "AI Personal Space" ? "AI Space" : nav.label === "Workspace History" ? "History" : nav.label === "Profile & Memory" ? "Profile" : nav.label}
+                  {nav.label}
                 </span>
                 {isActive && (
                   <span className="absolute bottom-0 w-1 h-1 bg-emerald-400 rounded-full" />
