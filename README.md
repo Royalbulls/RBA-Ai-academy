@@ -1,20 +1,47 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# RBA AI OS
 
-# Run and deploy your AI Studio app
+AI-Powered Financial Learning & Business Operating System
 
-This contains everything you need to run your app locally.
+Banner Image
 
-View your app in AI Studio: https://ai.studio/apps/c726bb1e-e666-4b47-a928-04feee3fcff8
+About
 
-## Run Locally
+Vision
 
-**Prerequisites:**  Node.js
+Features
 
+• AI Chat
+• AI Academy
+• Business OS
+• Loan Workflow
+• CRM
+• Leads Marketplace
+• Wallet
+• RBA Services
+• Admin Panel
+• Notifications
+• Referrals
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+Technology Stack
+
+Architecture
+
+Folder Structure
+
+Installation
+
+Firebase Setup
+
+Gemini API Setup
+
+Screenshots
+
+Roadmap
+
+Version History
+
+Founder
+
+Royal Bulls Advisory Pvt. Ltd.
+
+License
