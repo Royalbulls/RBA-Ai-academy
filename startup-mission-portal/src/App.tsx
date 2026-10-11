@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, ReactNode, useEffect, useMemo, useState } from "react";
 import { signInWithEmailAndPassword, onAuthStateChanged, signOut, User } from "firebase/auth";
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import { httpsCallable } from "firebase/functions";
@@ -140,7 +140,7 @@ const budgets = ["Below ₹5,000", "₹5,000–₹15,000", "₹15,000–₹50,00
 const statuses = ["new", "contact_pending", "qualified", "not_qualified", "consultation_scheduled", "proposal_sent", "awaiting_payment", "paid", "in_progress", "review", "delivered", "follow_up", "closed", "on_hold", "cancelled"];
 const faqs = [["faq1", "faq1a"], ["faq2", "faq2a"], ["faq3", "faq3a"], ["faq4", "faq4a"]] as const;
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({ label, children }: { label: string; children: ReactNode }) {
   return <label className="field"><span>{label}</span>{children}</label>;
 }
 function App() {
