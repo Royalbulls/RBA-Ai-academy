@@ -31,7 +31,7 @@ React, TypeScript, Vite, Firebase Authentication, Cloud Firestore, Firebase Func
 - Set `VITE_RECAPTCHA_ENTERPRISE_SITE_KEY` and initialise App Check in the client using your real site key; do not disable server enforcement to make the form work.
 - Create Firebase Auth users for staff and set custom claims (`admin: true` or `startupAdvisor: true`) through a trusted Admin SDK script or controlled server process. Never set staff claims from the browser.
 - Verify Firestore rules, App Check enforcement, duplicate guard behaviour, rate limiting and abuse protection.
-- Configure the actual company support phone/email, privacy notice, terms, refund policy, grievance contact, retention and deletion process.
+- Replace the starter privacy/terms/refund disclosures with company-approved text and add the verified company support phone/email, grievance contact, retention and deletion process before public launch.
 - Configure real package terms and tax treatment. No online payment is claimed to be implemented; integrate a provider only after merchant onboarding and verified server webhooks.
 - Run `npm run build`, functions build, security tests, accessibility/mobile tests, and production smoke tests.
 - Set Firebase budget alerts, monitoring and backups. Avoid collecting Aadhaar, bank details, OTPs or unnecessary identity documents.
@@ -41,7 +41,7 @@ React, TypeScript, Vite, Firebase Authentication, Cloud Firestore, Firebase Func
 From this folder, after the checks above:
 - `npm run build`
 - `cd functions && npm install && npm run build && cd ..`
-- `firebase deploy --only firestore:rules,functions:startup-mission,hosting`
+- `firebase deploy --only firestore:rules,firestore:indexes,functions,hosting`
 
 Use the correct Firebase project explicitly (for example `firebase use <project-id>`) and review the deployment target before deploying.
 
