@@ -22,6 +22,6 @@ if (app && import.meta.env.VITE_RECAPTCHA_ENTERPRISE_SITE_KEY) {
     isTokenAutoRefreshEnabled: true,
   });
 }
-export const auth = app ? getAuth(app) : null;
+export const appCheckConfigured = Boolean(app && import.meta.env.VITE_RECAPTCHA_ENTERPRISE_SITE_KEY);\nexport const auth = app ? getAuth(app) : null;
 export const db = app ? getFirestore(app) : null;
 export const functions = app ? getFunctions(app, "asia-south1") : null;
