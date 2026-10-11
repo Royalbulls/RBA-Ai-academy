@@ -8,7 +8,7 @@ import {
   Lightbulb, LockKeyhole, Menu, MessageCircle, Search, ShieldCheck,
   Sparkles, Store, TrendingUp, Users, WalletCards, X, Zap
 } from "lucide-react";
-import { auth, db, firebaseConfigured, functions } from "./firebase";
+import { appCheckConfigured, auth, db, firebaseConfigured, functions } from "./firebase";
 
 type Lang = "en" | "hi";
 type Application = {
@@ -209,7 +209,7 @@ function App() {
   const submitApplication = async (e: FormEvent) => {
     e.preventDefault(); setFormError(""); setSuccessCode("");
     if (!form.consent) { setFormError("Please agree to the contact and privacy notice."); return; }
-    if (!functions || !firebaseConfigured) { setFormError(t.setupDesc); return; }
+    if (!functions || !firebaseConfigured || !appCheckConfigured) { setFormError(t.setupDesc); return; }
     setFormBusy(true);
     try {
       const submit = httpsCallable(functions, "submitStartupApplication");
@@ -287,7 +287,7 @@ function App() {
         <div className="form-card"><div className="form-card-head"><div><span className="form-step">STARTUP APPLICATION</span><h3>{t.formTitle}</h3></div><span className="secure-mark"><ShieldCheck size={17}/>Private</span></div>
           {successCode ? <div className="success-panel"><span className="success-icon"><Check size={28}/></span><h3>{t.successTitle}</h3><p>{t.successDesc}</p><div className="reference-code">{successCode}</div><button className="button button-secondary" onClick={async()=>{await navigator.clipboard?.writeText(successCode);setCopied(true);}}>{copied ? t.copied : t.copyCode}</button><p className="small muted">Keep this code. Do not share sensitive documents or OTPs.</p></div>
           : <form className="startup-form" onSubmit={submitApplication}>
-            {!firebaseConfigured && <div className="notice-box"><b>{t.setupNeeded}</b><p>{t.setupDesc}</p></div>}
+            {(!firebaseConfigured || !appCheckConfigured) && <div className="notice-box"><b>{t.setupNeeded}</b><p>{t.setupDesc}</p></div>}
             <div className="form-grid"><Field label={t.name}><input autoComplete="name" value={form.name} onChange={e=>setForm({...form,name:e.target.value})} minLength={2} maxLength={100} required placeholder={lang==="hi"?"आपका नाम":"Your full name"}/></Field><Field label={t.phone}><input type="tel" autoComplete="tel" inputMode="tel" value={form.phone} onChange={e=>setForm({...form,phone:e.target.value})} pattern="[0-9+()\-\s]{8,20}" required placeholder="+91 …"/></Field><Field label={t.city}><input autoComplete="address-level2" value={form.city} onChange={e=>setForm({...form,city:e.target.value})} maxLength={100} required placeholder={lang==="hi"?"जैसे सागर":"e.g. Sagar"}/></Field><Field label={t.state}><input autoComplete="address-level1" value={form.state} onChange={e=>setForm({...form,state:e.target.value})} maxLength={100} required/></Field><Field label={t.language}><select value={form.language} onChange={e=>setForm({...form,language:e.target.value})}><option>Hindi</option><option>English</option><option>Other</option></select></Field><Field label={t.category}><select value={form.category} onChange={e=>setForm({...form,category:e.target.value})}>{categories.map(c=><option key={c}>{c}</option>)}</select></Field><Field label={t.stage}><select value={form.stage} onChange={e=>setForm({...form,stage:e.target.value})}>{stages.map(c=><option key={c}>{c}</option>)}</select></Field><Field label={t.budget}><select value={form.budget} onChange={e=>setForm({...form,budget:e.target.value})}>{budgets.map(c=><option key={c}>{c}</option>)}</select></Field><Field label={t.mode}><select value={form.mode} onChange={e=>setForm({...form,mode:e.target.value})}><option>Offline</option><option>Online</option><option>Hybrid</option></select></Field><Field label={t.help}><select value={form.help} onChange={e=>setForm({...form,help:e.target.value})}><option>Business idea</option><option>Business plan</option><option>Supplier research</option><option>Setup guidance</option><option>Marketing & sales</option><option>Registration guidance</option></select></Field></div>
             <Field label={t.description}><textarea value={form.description} onChange={e=>setForm({...form,description:e.target.value})} maxLength={1200} rows={3} placeholder={lang==="hi"?"आप क्या शुरू करना चाहते हैं?":"What would you like to build?"}/></Field>
             <div className="honeypot" aria-hidden="true"><label>Website<input tabIndex={-1} autoComplete="off" value={form.website} onChange={e=>setForm({...form,website:e.target.value})}/></label></div>
